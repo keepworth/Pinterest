@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵感收藏板 - Inspiration Board</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- ===== 顶部栏 ===== -->
+        <header class="header">
+            <h1 class="logo">灵感收藏板</h1>
+            <div class="header-controls">
+                <div class="search-wrapper">
+                    <span class="search-icon">&#128269;</span>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="搜索标题、分类、标签..."
+                        autocomplete="off"
+                    >
+                </div>
+                <button id="addBtn" class="btn btn-primary">+ 添加灵感</button>
+                <button id="favFilterBtn" class="btn btn-ghost">
+                    <span class="heart-icon">&#9825;</span> 我的收藏
+                </button>
+            </div>
+        </header>
+
+        <!-- ===== 分类导航 ===== -->
+        <nav class="category-nav" id="categoryNav">
+            <!-- JS 动态生成 -->
+        </nav>
+
+        <!-- ===== 统计栏 ===== -->
+        <div class="stats-bar">
+            <span id="totalCount">共 0 张图片</span>
+            <span class="stats-divider">&middot;</span>
+            <span id="favCount">已收藏 0 张</span>
+        </div>
+
+        <!-- ===== 图片瀑布流网格 ===== -->
+        <main class="image-grid" id="imageGrid">
+            <!-- JS 动态生成 -->
+        </main>
+
+        <!-- ===== 空状态提示 ===== -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">&#128444;</div>
+            <p>暂无匹配的灵感</p>
+            <p class="empty-hint">试试调整搜索条件或添加新的灵感吧</p>
+        </div>
+
+        <!-- ===== 页脚工具区 ===== -->
+        <footer class="footer">
+            <button id="exportBtn" class="btn btn-text">导出数据</button>
+            <span class="footer-divider">&middot;</span>
+            <button id="importBtn" class="btn btn-text">导入数据</button>
+            <span class="footer-divider">&middot;</span>
+            <button id="clearAllBtn" class="btn btn-text">清空全部数据</button>
+            <span class="footer-divider">&middot;</span>
+            <button id="resetDataBtn" class="btn btn-text">恢复示例数据</button>
+        </footer>
+    </div>
+
+    <!-- 隐藏的文件选择器（用于数据导入） -->
+    <input type="file" id="importFileInput" accept=".json" style="display: none;">
+
+    <!-- ===== 添加 / 编辑 模态框 ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">添加灵感</h2>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <form id="addForm" novalidate>
+                <!-- 图片 URL -->
+                <div class="form-group">
+                    <label for="imageUrl">图片 URL</label>
+                    <input
+                        type="url"
+                        id="imageUrl"
+                        class="form-input"
+                        placeholder="请输入图片链接地址"
+                    >
+                    <span class="form-error" id="imageUrlError"></span>
+                </div>
+
+                <!-- 本地图片上传 -->
+                <div class="form-group">
+                    <label>或选择本地图片</label>
+                    <div class="file-upload-row">
+                        <input
+                            type="file"
+                            id="imageFile"
+                            class="file-input-hidden"
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+                        <label for="imageFile" class="btn btn-secondary btn-sm file-label">选择图片</label>
+                        <span class="file-name" id="fileName"></span>
+                    </div>
+                    <span class="form-hint">支持 JPG / PNG / WebP，单张最大 2MB。本地图片优先于 URL。</span>
+                </div>
+
+                <!-- 图片预览 -->
+                <div class="form-group image-preview-group" id="imagePreviewGroup" style="display: none;">
+                    <label>预览</label>
+                    <div class="image-preview-wrapper">
+                        <img id="imagePreview" class="image-preview" src="" alt="预览">
+                        <div class="image-preview-error" id="imagePreviewError">
+                            <span>图片加载失败</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 标题 -->
+                <div class="form-group">
+                    <label for="title">标题 <span class="required">*</span></label>
+                    <input
+                        type="text"
+                        id="title"
+                        class="form-input"
+                        placeholder="请输入图片标题"
+                        required
+                    >
+                    <span class="form-error" id="titleError"></span>
+                </div>
+
+                <!-- 分类 -->
+                <div class="form-group">
+                    <label for="category">分类 <span class="required">*</span></label>
+                    <select id="category" class="form-input" required>
+                        <option value="">请选择分类</option>
+                        <!-- JS 动态生成选项 -->
+                    </select>
+                    <span class="form-error" id="categoryError"></span>
+                </div>
+
+                <!-- 标签 -->
+                <div class="form-group">
+                    <label for="tags">标签 <span class="hint">（多个标签用逗号分隔）</span></label>
+                    <input
+                        type="text"
+                        id="tags"
+                        class="form-input"
+                        placeholder="例如：蓝色, 极简, 卡片风"
+                    >
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">取消</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">确认添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== 查看详情模态框 ===== -->
+    <div class="modal-overlay" id="detailOverlay">
+        <div class="modal detail-modal">
+            <div class="modal-header">
+                <h2>灵感详情</h2>
+                <button class="modal-close" id="detailClose">&times;</button>
+            </div>
+            <div class="detail-body" id="detailBody">
+                <!-- JS 动态填充 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Toast 通知容器 ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
