@@ -1,0 +1,6 @@
+uploads/
+!uploads/.gitkeep
+data/*.sqlite
+data/*.db
+dist/
+node_modules/

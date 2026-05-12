@@ -1,8 +1,8 @@
-/**
- * 灵感收藏板 — 核心类型定义
- */
+export type SourceType = 'url' | 'upload';
+export type SortMode = 'newest' | 'oldest' | 'favorites';
+export type NavItem = 'home' | 'explore' | 'collections' | 'favorites' | 'create' | 'settings';
+export type AppView = 'home' | 'favorites' | 'explore' | 'collections' | 'settings' | 'profile' | 'board';
 
-/** 单条灵感数据 */
 export interface InspirationItem {
   id: string;
   title: string;
@@ -11,25 +11,35 @@ export interface InspirationItem {
   tags: string[];
   favorite: boolean;
   createdAt: string;
+  updatedAt: string;
+  sourceType: SourceType;
+  boardId?: string;
 }
 
-/** 表单提交数据（tags 已解析为数组） */
+export interface Board {
+  id: string;
+  name: string;
+  description?: string;
+  coverImageUrl?: string;
+  displayCover?: string;
+  inspirationCount?: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface InspirationFormData {
   title: string;
   imageUrl: string;
   category: string;
   tags: string[];
+  imageFile?: File;
+  boardId?: string;
 }
 
-/** 分类（后续可细化为联合类型） */
 export type Category = string;
 
-/** Toast 消息类型 */
+export interface CategoryConfig { key: string; label: string; labelKey: string; icon: string; }
+
 export type ToastType = 'success' | 'error' | 'info';
 
-/** 单条 Toast 消息 */
-export interface ToastMessage {
-  id: string;
-  type: ToastType;
-  text: string;
-}
+export interface ToastMessage { id: string; type: ToastType; text: string; }
